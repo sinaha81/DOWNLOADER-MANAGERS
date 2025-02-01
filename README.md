@@ -5,4 +5,4 @@
 با انتخاب کیفیت مد نظر 
 
 
-https://github.com/sinaha81/DOWNLOADER-MANAGERS/blob/main/image.png
+![image](https://github.com/user-attachments/assets/1d7840f7-fa04-4390-82cf-173d0f42c1e3)
