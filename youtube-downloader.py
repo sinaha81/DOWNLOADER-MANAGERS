@@ -1,3 +1,4 @@
+#  هوش تو کد دنبال چی هستی ؟؟؟ چخه 
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import threading
@@ -15,7 +16,6 @@ from io import BytesIO
 from datetime import timedelta
 import subprocess
 import sys
-
 try:
     import libtorrent as lt
 except ImportError:
@@ -54,7 +54,7 @@ def auto_detect_type(url):
         if ext == ".torrent":
             return "torrent"
         else:
-            return "local"  # اگر فایل محلی باشد
+            return "local" 
     if "youtube.com/playlist" in url_lower or "list=" in url_lower:
         return "youtube_playlist"
     if "youtube.com" in url_lower or "youtu.be" in url_lower:
@@ -76,7 +76,6 @@ def auto_detect_type(url):
     if "XHAMESTER.com" in url_lower:
         return "XHAMESTER"      
     return "generic"
-
 class ProfessionalDownloader(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -94,27 +93,17 @@ class ProfessionalDownloader(tk.Tk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
         self.update_interval = 100  
         self.after(self.update_interval, self.update_ui)
-
     def setup_ui(self):
-        # ساختار اصلی پنجره
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
-        
         main_frame = ttk.Frame(self)
         main_frame.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
-        
-    
         header_frame = ttk.Frame(main_frame)
         header_frame.pack(fill=tk.X, pady=10)
-        
-        
         self.thumbnail_label = ttk.Label(header_frame)
         self.thumbnail_label.pack(side=tk.RIGHT, padx=15)
-        
         input_frame = ttk.Frame(header_frame)
         input_frame.pack(side=tk.RIGHT, fill=tk.X, expand=True)
-        
-    
         self.url_entry = ttk.Entry(
             input_frame,
             width=80,
@@ -122,15 +111,12 @@ class ProfessionalDownloader(tk.Tk):
             style="Custom.TEntry"
         )
         self.url_entry.pack(side=tk.LEFT, expand=True, padx=10, pady=5)
-        
         ttk.Button(
             input_frame,
             text="تحلیل",
             command=self.analyze_and_start,
             style="Accent.TButton"
         ).pack(side=tk.LEFT, padx=5, pady=5)
-        
-        
         self.quality_tree = self.create_treeview(
             main_frame,
             columns=[
@@ -144,11 +130,8 @@ class ProfessionalDownloader(tk.Tk):
             height=7
         )
         self.quality_tree.pack(fill=tk.BOTH, expand=True, pady=10)
-        
-       
         control_frame = ttk.Frame(main_frame)
         control_frame.pack(fill=tk.X, pady=10)
-        
         control_buttons = [
             ("شروع دانلود", self.start_download, "success"),
             ("مکث همه", self.pause_all, "warning"),
@@ -157,7 +140,6 @@ class ProfessionalDownloader(tk.Tk):
             ("📂 مسیر دانلود", self.set_download_path, "secondary"),
             ("⚙ تنظیمات", self.show_settings, "secondary")
         ]
-        
         for text, cmd, style in control_buttons:
             ttk.Button(
                 control_frame,
@@ -165,8 +147,6 @@ class ProfessionalDownloader(tk.Tk):
                 command=cmd,
                 style=f"{style.capitalize()}.TButton"
             ).pack(side=tk.RIGHT, padx=5)
-        
-     
         self.progress_tree = self.create_treeview(
             main_frame,
             columns=[
@@ -182,14 +162,10 @@ class ProfessionalDownloader(tk.Tk):
             height=6
         )
         self.progress_tree.pack(fill=tk.BOTH, expand=True)
-        # افزودن منوی راست کلیک به جدول پیشرفت
         self.progress_tree.bind("<Button-3>", self.show_context_menu)
         self.progress_tree.bind("<Double-1>", self.on_progress_double_click)
-        
-        # نوار وضعیت
         status_bar = ttk.Frame(main_frame)
         status_bar.pack(fill=tk.X, pady=5)
-        
         status_items = [
             ("speed", "سرعت کل: 0 MB/s"),
             ("active", "دانلودهای فعال: 0"),
@@ -200,17 +176,13 @@ class ProfessionalDownloader(tk.Tk):
             lbl = ttk.Label(status_bar, text=text, style="Status.TLabel")
             lbl.pack(side=tk.RIGHT, padx=20)
             self.status_labels[key] = lbl
-
         self.update_disk_space()
-
-        # بخش گزارش (log)
         log_frame = ttk.Frame(main_frame)
         log_frame.pack(fill=tk.BOTH, expand=True, pady=10)
         ttk.Label(log_frame, text="گزارش:", style="TLabel").pack(anchor="w")
         self.log_text = tk.Text(log_frame, height=8, bg=DARK_THEME["secondary"], fg=DARK_THEME["text"], font=DARK_THEME["font"])
         self.log_text.pack(fill=tk.BOTH, expand=True)
         self.log("")
-
     def create_treeview(self, parent, columns, height):
         tree = ttk.Treeview(
             parent,
@@ -224,7 +196,6 @@ class ProfessionalDownloader(tk.Tk):
             tree.heading(col_id, text=col_text, anchor=tk.CENTER)
             tree.column(col_id, width=width, anchor=tk.CENTER)
         return tree
-
     def setup_styles(self):
         style = ttk.Style()
         style.theme_create("ydl_dark", parent="alt", settings={
@@ -300,19 +271,12 @@ class ProfessionalDownloader(tk.Tk):
         self.log_text.see(tk.END)
 
     def analyze_and_start(self):
-        """
-        پس از وارد کردن لینک، ابتدا نوع آن به‌صورت خودکار تشخیص داده می‌شود.
-        سپس در صورت پشتیبانی از استخراج اطلاعات (مثلاً برای سایت‌های ویدیویی و پلی‌لیست یوتیوب)
-        اطلاعات رسانه استخراج شده و کیفیت‌ها نمایش داده می‌شود. در صورت پلی‌لیست از کاربر سوال می‌شود.
-        """
         url = self.url_entry.get().strip()
         if not url:
             self.show_error("خطا", "لطفا لینک را وارد کنید")
             return
-
         self.auto_detected_type = auto_detect_type(url)
         self.log(f"لینک وارد شده: {url} | نوع تشخیص داده شده: {self.auto_detected_type}")
-        # اگر منبع تورنت یا فایل تورنت باشد، مستقیماً دانلود آغاز می‌شود.
         if self.auto_detected_type in ["torrent", "local"]:
             self.thumbnail_label.config(image="", text="تورنت/فایل تورنت تشخیص داده شد")
             self.quality_tree.delete(*self.quality_tree.get_children())
@@ -324,7 +288,6 @@ class ProfessionalDownloader(tk.Tk):
                 args=(url,),
                 daemon=True
             ).start()
-
     def fetch_media_info(self, url):
         try:
             ydl_opts = {
@@ -341,25 +304,21 @@ class ProfessionalDownloader(tk.Tk):
         except Exception as e:
             self.after(0, lambda: self.show_error("خطای تحلیل", str(e)))
             self.log(f"خطای تحلیل: {str(e)}")
-
     def handle_playlist(self, info):
         total = len(info.get('entries', []))
         answer = messagebox.askyesno("پلی‌لیست شناسایی شد",
                                      f"این لینک یک پلی‌لیست با {total} ویدیو است. آیا همه ویدیوها دانلود شوند؟")
         if answer:
             for entry in info['entries']:
-                # در برخی موارد عنوان یا url ممکن است در entry به صورت None باشد
                 url = entry.get('url')
                 if url:
-                    # در نظر گرفتن لینک کامل در صورت نسبی بودن
                     if not url.startswith("http"):
                         base_url = info.get('webpage_url')
                         url = base_url + url if base_url else url
-                    # ایجاد یک تسک جدید برای هر ویدیو
                     task = {
                         'id': str(time.time_ns()),
                         'url': url,
-                        'quality': "best",  # یا بر اساس انتخاب کاربر
+                        'quality': "best", 
                         'status': 'در صف انتظار',
                         'progress': '0%',
                         'speed': '0 KB/s',
@@ -377,7 +336,6 @@ class ProfessionalDownloader(tk.Tk):
                     self.log(f"تسک پلی‌لیست اضافه شد: {task['title']}")
             self.process_queue()
         else:
-            # در صورت عدم تایید، تنها اولین ویدیو دانلود می‌شود
             first_entry = info['entries'][0]
             info_single = first_entry
             self.update_media_ui(info_single)
@@ -401,9 +359,7 @@ class ProfessionalDownloader(tk.Tk):
 
     def update_quality_list(self, formats):
         self.quality_tree.delete(*self.quality_tree.get_children())
-        # فیلتر کردن فرمت‌هایی که ویدیو دارند
         filtered_formats = [f for f in formats if f.get('vcodec') != 'none']
-        # استفاده از مقدار 0 در صورت None بودن height یا tbr
         for fmt in sorted(filtered_formats, key=lambda x: (-(x.get('height') if x.get('height') is not None else 0),
                                                             -(x.get('tbr') if x.get('tbr') is not None else 0))):
             filesize = fmt.get('filesize')
@@ -419,16 +375,10 @@ class ProfessionalDownloader(tk.Tk):
         self.log("لیست کیفیت به‌روزرسانی شد.")
 
     def start_download(self):
-        """
-        ایجاد تسک دانلود بر اساس لینک وارد شده و نوع تشخیص داده‌شده.
-        در صورت سایت‌های ویدیویی (مانند یوتیوب، توییتر، اینستا و ...) در صورت انتخاب کیفیت از جدول،
-        کیفیت انتخاب می‌شود. در غیر این صورت، بهترین کیفیت انتخاب می‌شود.
-        """
         url = self.url_entry.get().strip()
         if not url:
             self.show_error("خطا", "لطفا لینک را وارد کنید")
             return
-
         detected_type = auto_detect_type(url)
         if detected_type not in ["torrent", "local", "youtube_playlist"]:
             selected = self.quality_tree.selection()
@@ -439,7 +389,6 @@ class ProfessionalDownloader(tk.Tk):
                 quality = "best"
         else:
             quality = "ناموجود"
-
         task_id = str(time.time_ns())
         task = {
             'id': task_id,
@@ -461,12 +410,7 @@ class ProfessionalDownloader(tk.Tk):
             self.download_queue.append(task)
         self.log(f"تسک جدید اضافه شد: {task['id']} | نوع: {task['type']}")
         self.process_queue()
-
     def process_queue(self):
-        """
-        بررسی و شروع دانلودها طبق تعداد همزمان مجاز.
-        هر تسک بر اساس نوع آن (yt-based یا تورنت) پردازش می‌شود.
-        """
         with self.download_tasks_lock:
             active_dls = [t for t in self.active_downloads.values() if not t.get('paused', False)]
             while len(active_dls) < self.settings["max_workers"] and self.download_queue:
@@ -494,12 +438,7 @@ class ProfessionalDownloader(tk.Tk):
                 self.log(f"دانلود شروع شد: {task['title']}")
         if self.settings.get("auto_start", True):
             self.after(100, self.process_queue)
-
     def handle_video_download(self, task):
-        """
-        دانلود ویدیو (یا محتوای سایت‌های پشتیبانی‌شده توسط yt_dlp) با استفاده از yt_dlp.
-        در صورت بروز خطا، تلاش مجدد انجام می‌شود.
-        """
         try:
             ydl_opts = {
                 'format': f'bestvideo[height={task["quality"].replace("p", "")}]+bestaudio/best'
@@ -510,9 +449,8 @@ class ProfessionalDownloader(tk.Tk):
                 'nopart': False,
                 'continuedl': True,
             }
-            # اعمال محدودیت سرعت در صورت فعال بودن تنظیم
             if self.settings.get("enable_speed_limit", False):
-                ydl_opts['ratelimit'] = self.settings.get("speed_limit", 1024) * 1024  # تبدیل به بایت بر ثانیه
+                ydl_opts['ratelimit'] = self.settings.get("speed_limit", 1024) * 1024  
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(task['url'], download=False)
                 task['title'] = info.get('title', 'بدون عنوان')
@@ -528,12 +466,7 @@ class ProfessionalDownloader(tk.Tk):
             self.log(f"خطای دانلود ویدیو: {str(e)}")
         finally:
             self.finalize_download(task)
-
     def handle_torrent_download(self, task):
-        """
-        دانلود تورنت با استفاده از libtorrent.
-        لینک وارد شده می‌تواند magnet یا مسیر فایل torrent باشد.
-        """
         try:
             ses = lt.session()
             port_min, port_max = self.settings.get("torrent_listen_port", (6881, 6891))
@@ -566,7 +499,6 @@ class ProfessionalDownloader(tk.Tk):
             self.log(f"خطای دانلود تورنت: {str(e)}")
         finally:
             self.finalize_download(task)
-
     def update_download_progress(self, d, task):
         if d.get('status') == 'downloading':
             task['progress'] = d.get('_percent_str', '0%')
@@ -576,7 +508,6 @@ class ProfessionalDownloader(tk.Tk):
             task['progress'] = '100%'
             task['speed'] = '0 KB/s'
             task['eta'] = '0'
-
     def handle_download_error(self, task, error):
         task['retries'] = task.get('retries', 0) + 1
         if task['retries'] <= self.settings["max_retries"]:
@@ -594,9 +525,7 @@ class ProfessionalDownloader(tk.Tk):
             if task['id'] in self.active_downloads:
                 del self.active_downloads[task['id']]
         self.process_queue()
-
     def update_ui(self):
-        # به‌روزرسانی جدول پیشرفت
         self.progress_tree.delete(*self.progress_tree.get_children())
         total_speed = 0
         active_count = 0
@@ -633,12 +562,10 @@ class ProfessionalDownloader(tk.Tk):
         self.status_labels['speed'].config(text=f"سرعت کل: {humanize.naturalsize(total_speed)}/s")
         self.update_disk_space()
         self.after(self.update_interval, self.update_ui)
-
     def parse_speed(self, speed_str):
         units = {"KB": 1024, "MB": 1024**2, "GB": 1024**3}
         match = re.match(r"([\d.]+)\s*([KMG]B)/s", speed_str)
         return float(match.group(1)) * units.get(match.group(2), 0) if match else 0
-
     def update_disk_space(self):
         try:
             usage = shutil.disk_usage(self.settings["download_path"])
@@ -646,18 +573,11 @@ class ProfessionalDownloader(tk.Tk):
             self.status_labels['disk'].config(text=f"فضای آزاد: {humanize.naturalsize(free_space)}")
         except Exception as e:
             self.log(f"خطای بررسی فضای دیسک: {str(e)}")
-
     def show_settings(self):
-        """
-        پنجره تنظیمات پیشرفته شامل مسیر دانلود، تعداد دانلود همزمان،
-        تنظیم تم تاریک/روشن، محدودیت سرعت و پورت‌های تورنت می‌باشد.
-        """
         settings_win = tk.Toplevel(self)
         settings_win.title("تنظیمات پیشرفته")
         settings_win.geometry("400x500")
-        
         self.settings_widgets = {}
-        
         ttk.Label(settings_win, text="مسیر دانلود:", style="TLabel").pack(pady=10)
         path_frame = ttk.Frame(settings_win)
         path_frame.pack()
@@ -669,13 +589,10 @@ class ProfessionalDownloader(tk.Tk):
             text="انتخاب مسیر",
             command=lambda: self.set_setting_path(settings_win)
         ).pack(side=tk.LEFT, padx=5)
-        
         ttk.Label(settings_win, text="حداکثر دانلود همزمان:", style="TLabel").pack(pady=10)
         self.settings_widgets['max_workers'] = ttk.Spinbox(settings_win, from_=1, to=10, width=5)
         self.settings_widgets['max_workers'].set(self.settings["max_workers"])
         self.settings_widgets['max_workers'].pack()
-        
-        
         ttk.Label(settings_win, text="پورت‌های تورنت (شروع-پایان):", style="TLabel").pack(pady=10)
         torrent_frame = ttk.Frame(settings_win)
         torrent_frame.pack()
@@ -685,31 +602,25 @@ class ProfessionalDownloader(tk.Tk):
         self.settings_widgets['torrent_port_max'] = ttk.Entry(torrent_frame, width=6)
         self.settings_widgets['torrent_port_max'].insert(0, str(self.settings.get("torrent_listen_port", (6881, 6891))[1]))
         self.settings_widgets['torrent_port_max'].pack(side=tk.LEFT, padx=5)
-        
-        # تنظیمات محدودیت سرعت
         ttk.Label(settings_win, text="فعال کردن محدودیت سرعت:", style="TLabel").pack(pady=10)
         self.settings_widgets['enable_speed_limit'] = tk.BooleanVar(value=self.settings.get("enable_speed_limit", False))
         speed_limit_chk = ttk.Checkbutton(settings_win, text="محدودیت سرعت", variable=self.settings_widgets['enable_speed_limit'])
         speed_limit_chk.pack()
-        
         ttk.Label(settings_win, text="سرعت محدود (KB/s):", style="TLabel").pack(pady=10)
         self.settings_widgets['speed_limit'] = ttk.Entry(settings_win, width=10)
         self.settings_widgets['speed_limit'].insert(0, str(self.settings.get("speed_limit", 1024)))
         self.settings_widgets['speed_limit'].pack(pady=5)
-        
         ttk.Button(
             settings_win,
             text="ذخیره تنظیمات",
             command=self.save_new_settings,
             style="Success.TButton"
         ).pack(pady=20)
-
     def set_setting_path(self, parent):
         path = filedialog.askdirectory(parent=parent)
         if path:
             self.settings_widgets['download_path'].delete(0, tk.END)
             self.settings_widgets['download_path'].insert(0, path)
-
     def save_new_settings(self):
         try:
             torrent_min = int(self.settings_widgets['torrent_port_min'].get())
@@ -732,14 +643,12 @@ class ProfessionalDownloader(tk.Tk):
             self.configure(background=DARK_THEME["primary"])
         else:
             self.configure(background="white")
-
     def pause_all(self):
         with self.download_tasks_lock:
             for task in self.active_downloads.values():
                 task['paused'] = True
                 task['status'] = 'مکث شده'
         self.log("همه دانلودها مکث شدند.")
-
     def resume_all(self):
         with self.download_tasks_lock:
             for task in self.active_downloads.values():
@@ -747,14 +656,12 @@ class ProfessionalDownloader(tk.Tk):
                 task['status'] = 'در حال دانلود'
         self.log("همه دانلودها از سر گرفته شدند.")
         self.process_queue()
-
     def cancel_all(self):
         with self.download_tasks_lock:
             self.active_downloads.clear()
             self.download_queue.clear()
         self.log("همه دانلودها لغو شدند.")
         self.update_ui()
-
     def set_download_path(self):
         path = filedialog.askdirectory()
         if path:
@@ -762,9 +669,6 @@ class ProfessionalDownloader(tk.Tk):
             self.save_settings()
 
     def on_progress_double_click(self, event):
-        """
-        با دابل کلیک روی ردیف دانلود، در صورت تکمیل شدن، فایل دانلود شده با برنامه پیش‌فرض باز می‌شود.
-        """
         selected = self.progress_tree.focus()
         if not selected:
             return
@@ -783,11 +687,7 @@ class ProfessionalDownloader(tk.Tk):
                 self.show_error("خطا", f"نمی‌توان فایل را باز کرد: {str(e)}")
         else:
             self.show_error("خطا", "فایل موجود نیست یا دانلود تکمیل نشده است.")
-
     def show_context_menu(self, event):
-        """
-        نمایش منوی راست کلیک برای عملیات روی یک تسک دانلود (لغو یا مکث/ادامه)
-        """
         item_id = self.progress_tree.identify_row(event.y)
         if item_id:
             self.progress_tree.selection_set(item_id)
@@ -795,7 +695,6 @@ class ProfessionalDownloader(tk.Tk):
             menu.add_command(label="لغو دانلود", command=lambda: self.cancel_task(item_id))
             menu.add_command(label="مکث/ادامه", command=lambda: self.toggle_pause_task(item_id))
             menu.tk_popup(event.x_root, event.y_root)
-
     def cancel_task(self, task_id):
         with self.download_tasks_lock:
             if task_id in self.active_downloads:
@@ -805,7 +704,6 @@ class ProfessionalDownloader(tk.Tk):
                 self.log(f"تسک {task_id} لغو شد.")
             self.download_queue = [t for t in self.download_queue if t['id'] != task_id]
         self.update_ui()
-
     def toggle_pause_task(self, task_id):
         with self.download_tasks_lock:
             if task_id in self.active_downloads:
@@ -818,18 +716,14 @@ class ProfessionalDownloader(tk.Tk):
                     task['status'] = 'در حال دانلود'
                     self.log(f"تسک {task_id} از حالت مکث خارج شد.")
         self.update_ui()
-
     def show_error(self, title, message):
         messagebox.showerror(title, message)
-
     def show_success(self, message):
         messagebox.showinfo("موفقیت", message)
-
     def on_close(self):
         if messagebox.askyesno("خروج", "آیا مطمئن هستید؟"):
             self.save_settings()
             self.destroy()
-
 if __name__ == "__main__":
     app = ProfessionalDownloader()
     app.mainloop()
