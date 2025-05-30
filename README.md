@@ -4,8 +4,6 @@
 ## 🎬 YouTube Downloader - دانلود ویدیوهای یوتیوب در لحظه! 🚀
 دیگه لازم نیست دنبال روش‌های پیچیده بگردید! با YouTube Downloader می‌تونید ویدیوهای یوتیوب رو با یه کلیک ساده دانلود کنید. فقط لینک ویدیو رو وارد کن و بقیه کار رو بذار به ما! 😉
  ___
- دانلود : 
- https://github.com/sinaha81/DOWNLOADER-MANAGERS/releases/download/DOWNLOADER_MANAGERS/SINA-youtube-downloader.exe
  ___
 # ویژگی‌ها:
 💥 دانلود سریع و بدون دردسر: فقط لینک رو بچسبون، کیفیت و فرمت رو انتخاب کن و کلیک کن! تمام. <br/>
